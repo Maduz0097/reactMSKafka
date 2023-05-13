@@ -5,7 +5,7 @@ export const Button = () => {
     const [input, setInput] = useState('');
     useEffect(()=>{
         const ws = new WebSocket('ws://localhost:3000/socket');
-        const data = {data:"text"}
+        // const data = {data:"text"}
 
 
         ws.onopen = (event)=>{

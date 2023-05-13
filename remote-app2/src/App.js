@@ -24,14 +24,14 @@ export const App = () => {
   //   };
   // },[input])
 
-const sendData = () => {
-  const ws = new WebSocket('ws://localhost:3000/socket');
-  ws.onopen = (event)=>{
-    console.log(2,performance.now())
-    setSendTime(performance.now())
-    ws.send(JSON.stringify(input))
+  const sendData = () => {
+    const ws = new WebSocket('ws://localhost:3000/socket');
+    ws.onopen = (event)=>{
+      console.log(2,performance.now())
+      setSendTime(performance.now())
+      ws.send(JSON.stringify(input))
+    }
   }
-}
   return(
       <>
         <div className={"data-input"}>

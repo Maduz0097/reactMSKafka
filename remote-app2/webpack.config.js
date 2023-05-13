@@ -11,7 +11,7 @@ module.exports = {
         static: {
             directory: path.join(__dirname, "public"),
         },
-        port: 7000,
+        port: 5000,
     },
     module: {
         rules: [
@@ -52,12 +52,11 @@ module.exports = {
             manifest: "./public/manifest.json",
         }),
         new ModuleFederationPlugin({
-            name: "Remote1",
+            name: "Remote2",
 
             filename: "moduleEntry.js",
             exposes: {
                 "./App": "./src/App",
-                "./Button": "./src/Button",
             },
             shared: {
                 ...dependencies,
