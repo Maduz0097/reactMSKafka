@@ -1,0 +1,11 @@
+{
+  "name": "final",
+  "version": "1.0.0",
+  "devDependencies": {
+    "concurrently": "^8.0.1"
+  },
+  "scripts": {
+    "start:all": "concurrently \"npm start --prefix remote-app2\" \"npm start --prefix remote-app\" \"npm start --prefix host-app\""
+  }
+}
+

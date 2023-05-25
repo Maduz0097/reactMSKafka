@@ -1,18 +1,35 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const { Kafka } = require('kafkajs');
+const { Kafka, CompressionTypes, CompressionCodecs } = require('kafkajs');
+const SnappyCodec = require('kafkajs-snappy');
 const expressWs = require('express-ws')(app);
+const WebSocket = require('ws');
+const zlib = require('zlib');
 app.use(cors());
-
+CompressionCodecs[CompressionTypes.Snappy] = SnappyCodec;
 
 const kafka = new Kafka({
     clientId: 'my-app',
-    brokers: ['localhost:9092']
+    brokers: ['localhost:9092'],
+    producer: {
+        maxMessageBytes: 10 * 1024 * 1024, // Set max message size to 10MB
+        allowAutoTopicCreation: true, // Enable auto topic creation if required
+    },
+    consumer: {
+        maxBytesPerPartition: 10 * 1024 * 1024, // Set max bytes per partition to 10MB
+    },
 });
 
-const producer = kafka.producer();
-const consumer = kafka.consumer({ groupId: 'my-group' });
+const producer = kafka.producer({
+    batchSize: 100000, // Adjust batch size as needed for better performance
+    compressionThreshold: 1, // Set a low compression threshold to compress all messages
+});
+
+const consumer = kafka.consumer({
+    groupId: 'my-group',
+    maxBytes: 10 * 1024 * 1024, // Set max bytes per fetch to 10MB
+});
 
 // Connect to Kafka producer and consumer
 (async () => {
@@ -22,8 +39,11 @@ const consumer = kafka.consumer({ groupId: 'my-group' });
 
     consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
+            // Broadcast the message to connected WebSocket clients
             expressWs.getWss().clients.forEach((client) => {
-                client.send(message.value.toString());
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(message.value.toString());
+                }
             });
         },
     });
@@ -32,13 +52,35 @@ const consumer = kafka.consumer({ groupId: 'my-group' });
 // Set up WebSocket connection
 app.ws('/socket', (ws, req) => {
     ws.on('message', async (message) => {
-        console.log(1, message);
+        // Determine compression type based on message size
+        const compressionType =
+            message.length > 1024 * 1024 ? CompressionTypes.GZIP : CompressionTypes.Snappy;
+
+        // Compress the message
+        let compressedMessage = message;
+        if (compressionType === CompressionTypes.GZIP) {
+            compressedMessage = await new Promise((resolve, reject) => {
+                zlib.gzip(message, (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+        }
 
         // Produce a message to Kafka
         await producer.send({
             topic: 'my-topic',
-            messages: [{ value: message }],
+            compression: compressionType,
+            messages: [{ value: compressedMessage }],
         });
+    });
+
+    // Handle WebSocket close event
+    ws.on('close', () => {
+        // Clean up resources or perform any necessary operations
     });
 });
 

@@ -43,24 +43,7 @@ const [receivedTime,setReceivedTime] = useState([])
     }, []);
     return(
         <div>
-            {/*<div>*/}
-            {/*    <h1>Kafka WebSocket Example</h1>*/}
-            {/*    <ul>*/}
-            {/*        {messages.map((message, index) => (*/}
-            {/*            <li key={index}>{message}</li>*/}
-            {/*        ))}*/}
-            {/*    </ul>*/}
-            {/*</div>*/}
-            {/*<h1>This is the Host!</h1>*/}
-            {/*<h2>Remote App:</h2>*/}
-            {/*<RemoteWrapper>*/}
-            {/*    <RemoteApp />*/}
-            {/*</RemoteWrapper>*/}
-            {/*<h2>Remote Button:</h2>*/}
-            {/*<RemoteWrapper>*/}
-            {/*    <RemoteButton />*/}
-            {/*</RemoteWrapper>*/}
-            {/*<br />*/}
+
             <a href="http://localhost:4000">Link to Remote App</a>
 
             <div className={"main-container"}>
@@ -69,13 +52,13 @@ const [receivedTime,setReceivedTime] = useState([])
                     <h3>Data View</h3>
                     <div className={"data-list"}>
                         <ul>
-                            {
-                                messages?.map((message,index)=>(
-<li>
-    {message} | {receivedTime[index]}
-</li>
-                                ))
-                            }
+{/*                            {*/}
+{/*                                messages?.map((message,index)=>(*/}
+{/*<li>*/}
+{/*    {message} | {receivedTime[index]}*/}
+{/*</li>*/}
+{/*                                ))*/}
+{/*                            }*/}
                         </ul>
 
                     </div>
