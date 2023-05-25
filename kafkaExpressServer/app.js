@@ -6,6 +6,8 @@ const SnappyCodec = require('kafkajs-snappy');
 const expressWs = require('express-ws')(app);
 const WebSocket = require('ws');
 const zlib = require('zlib');
+const { gzip } = require('pako')
+const { decode } = require('msgpack-lite');
 app.use(cors());
 CompressionCodecs[CompressionTypes.Snappy] = SnappyCodec;
 
@@ -40,9 +42,17 @@ const consumer = kafka.consumer({
     consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
             // Broadcast the message to connected WebSocket clients
+
+            // console.log(message.value.toString())
+let decoded = decode(message.value)
+
+            let jsonData = JSON.stringify(decoded)
+            const decompressedData = gzip(jsonData);
+            console.log(decompressedData);
+            // console.log(decode(compressed.toString()))
             expressWs.getWss().clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(message.value.toString());
+                    client.send(decompressedData);
                 }
             });
         },

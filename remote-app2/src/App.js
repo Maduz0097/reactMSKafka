@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from "react";
+import pako from 'pako';
+import { encode, decode } from 'msgpack-lite';
 import {obj2} from "./testObj";
 import {obj9} from "./testObj"
 export const App = () => {
@@ -8,7 +10,7 @@ export const App = () => {
     const [receivedTime,setReceivedTime] = useState(0)
     const time = performance.timeOrigin
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:3000/socket');
+        const ws = new WebSocket('ws://192.168.1.2:3000/socket');
 // const data = "text"
 // ws.onopen = (event)=>{
 //     ws.send(JSON.stringify(data))
@@ -18,11 +20,28 @@ export const App = () => {
             let performanceTime = performance.now()
             setReceivedTime(performanceTime)
             console.log("ok")
-            console.log(JSON.parse(e?.data))
-            const newMessage = JSON.parse(e?.data);
-            console.log(1,performance.now())
 
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
+console.log(e?.data)
+
+            const reader = new FileReader();
+let decompressed;
+            reader.onload = function(event) {
+                const arrayBuffer = event.target.result;
+                const uint8Array = new Uint8Array(arrayBuffer);
+decompressed = pako.ungzip(uint8Array,{to:'string'})
+
+                console.log("decom",JSON.parse(decompressed))
+                // Use the uint8Array as needed
+                console.log(uint8Array);
+            };
+
+            reader.readAsArrayBuffer(e?.data);
+// const jsonStr = JSON.parse(decompressedData);
+//             console.log(jsonStr)
+            // const newMessage = JSON.parse(e?.data);
+            // console.log(1,performance.now())
+            //
+            // setMessages((prevMessages) => [...prevMessages, newMessage]);
         }
 
 
@@ -55,7 +74,7 @@ export const App = () => {
   // },[input])
 
   const sendData = () => {
-    const ws = new WebSocket('ws://localhost:3000/socket');
+    const ws = new WebSocket('ws://192.168.1.2:3000/socket');
     ws.onopen = (event)=>{
       console.log(2,performance.now())
       setSendTime(performance.now())
