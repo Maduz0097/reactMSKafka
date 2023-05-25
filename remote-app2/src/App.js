@@ -8,7 +8,7 @@ export const App = () => {
     const [receivedTime,setReceivedTime] = useState(0)
     const time = performance.timeOrigin
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:3000/socket');
+        const ws = new WebSocket('ws://192.168.1.2:3000/socket');
 // const data = "text"
 // ws.onopen = (event)=>{
 //     ws.send(JSON.stringify(data))
@@ -55,7 +55,7 @@ export const App = () => {
   // },[input])
 
   const sendData = () => {
-    const ws = new WebSocket('ws://localhost:3000/socket');
+      const ws = new WebSocket('ws://192.168.1.2:3000/socket');
     ws.onopen = (event)=>{
       console.log(2,performance.now())
       setSendTime(performance.now())

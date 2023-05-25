@@ -9,7 +9,7 @@ export const App = () => {
   const [sendTime, setSendTime] = useState(0);
   const [input, setInput] = useState('');
   const time = performance.timeOrigin
-    const ws = new WebSocket('ws://localhost:3000/socket');
+    const ws = new WebSocket('ws://192.168.1.2:3000/socket');
     const stringifiedObj8 = JSON.stringify(obj8)
     const stringifiedObj6 = JSON.stringify(obj6)
     const stringifiedObj9 = JSON.stringify(obj9)
@@ -41,7 +41,7 @@ export const App = () => {
   // },[input])
 
 const sendData = (object) => {
-    const ws = new WebSocket('ws://localhost:3000/socket');
+    const ws = new WebSocket('ws://192.168.1.2:3000/socket');
   ws.onopen = (event)=>{
     console.log(2,performance.now())
     setSendTime(performance.now())
