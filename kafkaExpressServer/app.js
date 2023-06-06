@@ -13,7 +13,7 @@ CompressionCodecs[CompressionTypes.Snappy] = SnappyCodec;
 
 const kafka = new Kafka({
     clientId: 'my-app',
-    brokers: ['localhost:9092'],
+    brokers: ['20.244.24.1:9092'],
     producer: {
         maxMessageBytes: 10 * 1024 * 1024, // Set max message size to 10MB
         allowAutoTopicCreation: true, // Enable auto topic creation if required
@@ -95,6 +95,7 @@ app.ws('/socket', (ws, req) => {
 });
 
 const port = 3000;
+
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
